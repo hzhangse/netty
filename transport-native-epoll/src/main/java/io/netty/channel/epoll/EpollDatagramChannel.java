@@ -29,7 +29,6 @@ import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.DatagramChannelConfig;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.InternetProtocolFamily;
-import io.netty.channel.unix.DatagramSocketAddress;
 import io.netty.channel.unix.Errors;
 import io.netty.channel.unix.IovArray;
 import io.netty.channel.unix.Socket;
@@ -387,7 +386,7 @@ public final class EpollDatagramChannel extends AbstractEpollChannel implements 
             }
         } else if (data.nioBufferCount() > 1) {
             IovArray array = ((EpollEventLoop) eventLoop()).cleanIovArray();
-            array.add(data);
+            array.addReadable(data);
             int cnt = array.count();
             assert cnt != 0;
 
@@ -549,7 +548,7 @@ public final class EpollDatagramChannel extends AbstractEpollChannel implements 
                             // Try to use gathering writes via sendmmsg(...) syscall.
                             int offset = 0;
                             NativeDatagramPacketArray array = ((EpollEventLoop) eventLoop()).cleanDatagramPacketArray();
-                            boolean added = array.addForWrite(byteBuf);
+                            boolean added = array.addWritable(byteBuf);
                             assert added;
                             NativeDatagramPacketArray.NativeDatagramPacket[] packets = array.packets();
                             int received = socket.recvmmsg(packets, 0, array.count());

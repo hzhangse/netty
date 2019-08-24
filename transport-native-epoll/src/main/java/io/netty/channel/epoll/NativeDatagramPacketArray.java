@@ -26,7 +26,6 @@ import java.net.UnknownHostException;
 
 import static io.netty.channel.unix.Limits.UIO_MAX_IOV;
 import static io.netty.channel.unix.NativeInetAddress.copyIpv4MappedIpv6Address;
-import static io.netty.channel.unix.NativeInetAddress.ipv4MappedIpv6Address;
 
 /**
  * Support <a href="http://linux.die.net/man/2/sendmmsg">sendmmsg(...)</a> on linux with GLIBC 2.14+
@@ -51,7 +50,7 @@ final class NativeDatagramPacketArray implements ChannelOutboundBuffer.MessagePr
      * Try to add the given {@link DatagramPacket}. Returns {@code true} on success,
      * {@code false} otherwise.
      */
-    boolean add(DatagramPacket packet) {
+    private boolean addReadable(DatagramPacket packet) {
         if (count == packets.length) {
             // We already filled up to UIO_MAX_IOV messages. This is the max allowed per sendmmsg(...) call, we will
             // try again later.
@@ -66,7 +65,7 @@ final class NativeDatagramPacketArray implements ChannelOutboundBuffer.MessagePr
         InetSocketAddress recipient = packet.recipient();
 
         int offset = iovArray.count();
-        if (!iovArray.add(content)) {
+        if (!iovArray.addReadable(content)) {
             // Not enough space to hold the whole content, we will try again later.
             return false;
         }
@@ -76,7 +75,7 @@ final class NativeDatagramPacketArray implements ChannelOutboundBuffer.MessagePr
         return true;
     }
 
-    boolean addForWrite(ByteBuf content) {
+    boolean addWritable(ByteBuf content) {
         if (count == packets.length) {
             // We already filled up to UIO_MAX_IOV messages. This is the max allowed per recvmmsg(...) call, we will
             // try again later.
@@ -89,7 +88,7 @@ final class NativeDatagramPacketArray implements ChannelOutboundBuffer.MessagePr
         NativeDatagramPacket p = packets[count];
 
         int offset = iovArray.count();
-        if (!iovArray.addForWriting(content)) {
+        if (!iovArray.addWritable(content)) {
             // Not enough space to hold the whole content, we will try again later.
             return false;
         }
@@ -100,7 +99,7 @@ final class NativeDatagramPacketArray implements ChannelOutboundBuffer.MessagePr
 
     @Override
     public boolean processMessage(Object msg) {
-        return msg instanceof DatagramPacket && add((DatagramPacket) msg);
+        return msg instanceof DatagramPacket && addReadable((DatagramPacket) msg);
     }
 
     /**
