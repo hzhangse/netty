@@ -14,8 +14,15 @@
  */
 package io.netty.example.http2.helloworld.client;
 
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -23,12 +30,6 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http2.HttpConversionUtil;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.PlatformDependent;
-
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Process {@link io.netty.handler.codec.http.FullHttpResponse} translated from HTTP/2 frames
@@ -75,6 +76,7 @@ public class HttpResponseHandler extends SimpleChannelInboundHandler<FullHttpRes
                 throw new RuntimeException(writeFuture.cause());
             }
             ChannelPromise promise = entry.getValue().getValue();
+
             if (!promise.awaitUninterruptibly(timeout, unit)) {
                 throw new IllegalStateException("Timed out waiting for response on stream id " + entry.getKey());
             }
@@ -82,6 +84,7 @@ public class HttpResponseHandler extends SimpleChannelInboundHandler<FullHttpRes
                 throw new RuntimeException(promise.cause());
             }
             System.out.println("---Stream id: " + entry.getKey() + " received---");
+           
             itr.remove();
         }
     }

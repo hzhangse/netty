@@ -56,11 +56,11 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 public final class Http2Client {
 
-    static final boolean SSL = System.getProperty("ssl") != null;
+    static final boolean SSL = System.getProperty("ssl","true") != null;
     static final String HOST = System.getProperty("host", "127.0.0.1");
     static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "8443" : "8080"));
-    static final String URL = System.getProperty("url", "/whatever");
-    static final String URL2 = System.getProperty("url2");
+    static final String URL = System.getProperty("url");
+    static final String URL2 = System.getProperty("url2","/whatever");
     static final String URL2DATA = System.getProperty("url2data", "test data!");
 
     public static void main(String[] args) throws Exception {
@@ -133,13 +133,17 @@ public final class Http2Client {
                 responseHandler.put(streamId, channel.write(request), channel.newPromise());
             }
             channel.flush();
-            responseHandler.awaitResponses(5, TimeUnit.SECONDS);
-            System.out.println("Finished HTTP/2 request(s)");
+            responseHandler.awaitResponses(50, TimeUnit.SECONDS);
+//          
+//            for (int i=0;i<1;i++) {
+//              responseHandler.awaitResponses(50, TimeUnit.SECONDS);
+//            }
+           // System.out.println("Finished HTTP/2 request(s)");
 
             // Wait until the connection is closed.
-            channel.close().syncUninterruptibly();
+           // channel.close().syncUninterruptibly();
         } finally {
-            workerGroup.shutdownGracefully();
+          //  workerGroup.shutdownGracefully();
         }
     }
 }

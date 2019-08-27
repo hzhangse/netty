@@ -21,7 +21,7 @@
   <parent>
     <groupId>io.netty</groupId>
     <artifactId>netty-parent</artifactId>
-    <version>4.1.40.Final-SNAPSHOT</version>
+    <version>4.1.39.Final</version>
   </parent>
 
   <artifactId>netty-example</artifactId>
@@ -111,7 +111,8 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>${tcnative.artifactId}</artifactId>
-      <classifier>${tcnative.classifier}</classifier>
+      <version>2.0.25.Final</version>
+      <classifier>linux-x86_64</classifier>
     </dependency>
     <dependency>
       <groupId>${conscrypt.groupId}</groupId>
