@@ -150,7 +150,7 @@ public final class Client {
 		Http2Headers headers = getCommonHeaders();
 		headers.add("ack", String.valueOf(ack));
 		//headers.add(Http2Headers.PseudoHeaderName.PATH.value(), SupportedPath.PUSH_PROMISE);
-		headers.add(Http2Headers.PseudoHeaderName.PATH.value(), "/hello-world/api/again");
+		headers.add(Http2Headers.PseudoHeaderName.PATH.value(), "/hello-world/api/push");
 		sendHeader(initializer, channel, headers, true);
 	}
 
@@ -158,7 +158,7 @@ public final class Client {
 			throws Http2Exception {
 
 		Http2Headers headers = getCommonHeaders();
-		headers.add(Http2Headers.PseudoHeaderName.PATH.value(), "/hello-world/api/again");
+		headers.add(Http2Headers.PseudoHeaderName.PATH.value(), "/hello-world/api/push");
 
 		sendHeader(initializer, channel, headers, true);
 	}
