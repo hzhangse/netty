@@ -134,16 +134,10 @@ public final class Http2Client {
             }
             channel.flush();
             responseHandler.awaitResponses(50, TimeUnit.SECONDS);
-//          
-//            for (int i=0;i<1;i++) {
-//              responseHandler.awaitResponses(50, TimeUnit.SECONDS);
-//            }
-           // System.out.println("Finished HTTP/2 request(s)");
-
             // Wait until the connection is closed.
-           // channel.close().syncUninterruptibly();
+            channel.close().syncUninterruptibly();
         } finally {
-          //  workerGroup.shutdownGracefully();
+           workerGroup.shutdownGracefully();
         }
     }
 }
